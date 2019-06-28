@@ -36,6 +36,9 @@ class TestsMerger(unittest.TestCase):
         # Given
         txt = '[20190628 11:00:00:000000] blabla\n[20190628 12:00:00:000000] blabla'
         txt_file = 'test_file.txt'
+        file_object = open(txt_file, 'w')
+        file_object.write(txt)
+        file_object.close()
         expected_list = ['[20190628 11:00:00:000000] blabla', '[20190628 12:00:00:000000] blabla']
 
         # When
