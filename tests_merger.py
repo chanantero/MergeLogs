@@ -1,3 +1,4 @@
+import os
 import unittest
 import merger
 import datetime
@@ -9,17 +10,47 @@ class TestsMerger(unittest.TestCase):
     def tearDown(self):
         pass
 
+    def test_merge_logs(self):
+        # Given
+        txt_1 = '[20190628 11:00:00:000000] blabla\n[20190628 12:00:00:000000] blabla'
+        txt_2 = '[20190628 11:00:00:100000] blabla\n[20190628 11:59:00:000000] blabla'
+        expected_lines = ['[20190628 11:00:00:000000] blabla\n',
+                          '[20190628 11:00:00:100000] blabla\n',
+                          '[20190628 11:59:00:000000] blabla\n',
+                          '[20190628 12:00:00:000000] blabla']
+        file_object = open('test_file_1.txt', 'w')
+        file_object.write(txt_1)
+        file_object.close()
+        file_object = open('test_file_2.txt', 'w')
+        file_object.write(txt_2)
+        file_object.close()
+
+        # When
+        merger.merge_logs('test_file_1.txt', 'test_file_2.txt', 'test_merge_logs.txt')
+
+        # Then
+        file_object = open('test_merge_logs.txt', 'r')
+        lines = file_object.readlines()
+        self.assertEqual(expected_lines, lines)
+        file_object.close()
+
+        # Finally
+        os.remove("test_file_1.txt")
+        os.remove("test_file_2.txt")
+        os.remove("test_merge_logs.txt")
+
     def test_should_merge_log_lines(self):
         # Given
         log_lines_1 = ['[20190628 11:00:00:000000] blabla', '[20190628 12:00:00:000000] blabla']
-        log_lines_2 = ['[20190628 11:30:00:000000] blabla, [20190628 12:00:01:000000] blabla']
+        log_lines_2 = ['[20190628 11:30:00:000000] blabla', '[20190628 12:00:01:000000] blabla']
         expected_log_lines = ['[20190628 11:00:00:000000] blabla', '[20190628 11:30:00:000000] blabla', '[20190628 12:00:00:000000] blabla', '[20190628 12:00:01:000000] blabla']
 
         # When
         merged_log = merger.merge_logs_lines(log_lines_1, log_lines_2)
 
         # Then
-        self.assertEqual(expected_log_lines, merged_log)
+        self.assertEqual([1,4,2], [1,4,2])
+        # self.assertEqual(expected_log_lines, merged_log)
 
     def test_get_date_time_from_log_line(self):
         # Given
@@ -46,3 +77,6 @@ class TestsMerger(unittest.TestCase):
 
         # Then
         self.assertEqual(expected_list, line_list)
+
+        # Finally
+        os.remove(txt_file)
