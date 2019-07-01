@@ -1,15 +1,15 @@
 import re
 import datetime
 
-def merge_logs(log_file_1, log_file_2, merged_log_file_name):
+def merge_logs(log_file_1, log_file_2, merged_log_file_name, prefix_1=None, prefix_2=None):
     log_lines_1 = file_to_line_list(log_file_1)
     log_lines_2 = file_to_line_list(log_file_2)
-    merged_log = merge_logs_lines(log_lines_1, log_lines_2)
+    merged_log = merge_logs_lines(log_lines_1, log_lines_2, prefix_1, prefix_2)
     file_object = open(merged_log_file_name, 'w')
     file_object.write("\n".join(merged_log))
     file_object.close()
 
-def merge_logs_lines(log_lines_1, log_lines_2):
+def merge_logs_lines(log_lines_1, log_lines_2, prefix_1=None, prefix_2=None):
 
     date_time_1 = []
     inds_1 = []
@@ -36,9 +36,15 @@ def merge_logs_lines(log_lines_1, log_lines_2):
     merged_log = []
     for i in range(0, sorted_info['num_elements']):
         if sorted_info['groups'][i] == 0:
-            merged_log.append(log_lines_1[inds_1[sorted_info['indices'][i]]])
+            if prefix_1 is not None:
+                merged_log.append(prefix_1+log_lines_1[inds_1[sorted_info['indices'][i]]])
+            else:
+                merged_log.append(log_lines_1[inds_1[sorted_info['indices'][i]]])
         elif sorted_info['groups'][i] == 1:
-            merged_log.append(log_lines_2[inds_2[sorted_info['indices'][i]]])
+            if prefix_1 is not None:
+                merged_log.append(prefix_2+log_lines_2[inds_2[sorted_info['indices'][i]]])
+            else:
+                merged_log.append(log_lines_2[inds_2[sorted_info['indices'][i]]])
 
     return merged_log
 
