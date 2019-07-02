@@ -22,9 +22,5 @@ for opt, arg in options:
 log_1 = remainder[0]
 log_2 = remainder[1]
 
-print("log_1 = ", log_1)
-print("log_2 = ", log_2)
-print("log_output = ", output_filename)
-print("prefix_1 = ", prefix_1)
-print("prefix_2 = ", prefix_2)
+merge_logs(log_1, log_2, output_filename, prefix_1, prefix_2)
 
